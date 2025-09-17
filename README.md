@@ -323,8 +323,8 @@ Perfect for showcasing network automation and cloud infrastructure skills to pot
 For questions or issues:
 
 - Create an issue in this repository
-- Contact: [your-email@example.com]
-- LinkedIn: [Your LinkedIn Profile]
+- Contact: suranga.fin@gmail.com
+- LinkedIn: https://www.linkedin.com/in/suranga-prasad
 
 ---
 
