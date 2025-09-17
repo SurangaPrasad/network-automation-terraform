@@ -336,9 +336,30 @@ data "archive_file" "canary_zip" {
   output_path = "/tmp/canary.zip"
   
   source {
-    content = templatefile("${path.module}/canary_script.js", {
-      domain_name = var.domain_name
-    })
+    content = <<-EOF
+const synthetics = require('Synthetics');
+const log = require('SyntheticsLogger');
+
+const apiCanaryBlueprint = async function () {
+    const response = await synthetics.executeHttpStep('healthCheck', {
+        hostname: '${var.domain_name}',
+        method: 'GET',
+        path: '/health',
+        port: 443,
+        protocol: 'https:',
+    });
+    
+    if (response.statusCode !== 200) {
+        throw new Error(`Expected status 200, got ${response.statusCode}`);
+    }
+    
+    return "success";
+};
+
+exports.handler = async () => {
+    return await synthetics.executeStep('apiCanaryBlueprint', apiCanaryBlueprint);
+};
+EOF
     filename = "nodejs/node_modules/apiCanaryBlueprint.js"
   }
 }
@@ -382,7 +403,41 @@ data "archive_file" "report_lambda" {
   output_path = "/tmp/report_lambda.zip"
   
   source {
-    content = file("${path.module}/report_generator.py")
+    content = <<-EOF
+import json
+import boto3
+from datetime import datetime
+
+def handler(event, context):
+    """Simple infrastructure report generator"""
+    
+    cloudwatch = boto3.client('cloudwatch')
+    sns = boto3.client('sns')
+    
+    project_name = event.get('PROJECT_NAME', 'network-automation')
+    environment = event.get('ENVIRONMENT', 'dev')
+    sns_topic = event.get('SNS_TOPIC', '')
+    
+    report = f"""
+Network Automation Infrastructure Report
+Project: {project_name} | Environment: {environment}
+Generated at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+Status: Infrastructure is operational
+"""
+    
+    if sns_topic:
+        sns.publish(
+            TopicArn=sns_topic,
+            Subject=f"Daily Report: {project_name} {environment.upper()}",
+            Message=report
+        )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Report generated successfully')
+    }
+EOF
     filename = "index.py"
   }
 }

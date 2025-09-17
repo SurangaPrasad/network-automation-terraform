@@ -84,10 +84,57 @@ resource "aws_launch_template" "web" {
     name = aws_iam_instance_profile.ec2_profile.name
   }
 
-  user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-    project_name = var.project_name
-    environment  = var.environment
-  }))
+  user_data = base64encode(<<-EOF
+#!/bin/bash
+# Update system
+yum update -y
+
+# Install necessary packages
+yum install -y httpd amazon-cloudwatch-agent
+
+# Create a simple web application
+mkdir -p /var/www/html
+cat > /var/www/html/index.html << 'HTML'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Automation Platform</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { color: #333; border-bottom: 2px solid #007acc; padding-bottom: 10px; }
+        .info { margin: 20px 0; }
+        .status { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">🌐 Network Automation Platform</h1>
+        <div class="info">
+            <h2>Infrastructure Status</h2>
+            <p class="status">✅ Load Balancer: Active</p>
+            <p class="status">✅ Auto Scaling: Enabled</p>
+            <p class="status">✅ Database: Connected</p>
+            <p class="status">✅ Monitoring: Active</p>
+        </div>
+        <div class="info">
+            <h2>Environment Details</h2>
+            <p><strong>Project:</strong> ${var.project_name}</p>
+            <p><strong>Environment:</strong> ${var.environment}</p>
+        </div>
+    </div>
+</body>
+</html>
+HTML
+
+# Create health check endpoint
+echo "OK" > /var/www/html/health
+
+# Configure Apache
+systemctl start httpd
+systemctl enable httpd
+EOF
+  )
 
   tag_specifications {
     resource_type = "instance"

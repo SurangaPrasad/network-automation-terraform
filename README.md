@@ -79,8 +79,7 @@ This infrastructure implements a three-tier architecture with the following comp
     ├── ec2/                   # EC2 instances and Auto Scaling
     │   ├── main.tf
     │   ├── variables.tf
-    │   ├── outputs.tf
-    │   └── user_data.sh       # Instance initialization script
+    │   └── outputs.tf
     ├── rds/                   # RDS database
     │   ├── main.tf
     │   ├── variables.tf
@@ -92,9 +91,7 @@ This infrastructure implements a three-tier architecture with the following comp
     └── monitoring/            # CloudWatch monitoring
         ├── main.tf
         ├── variables.tf
-        ├── outputs.tf
-        ├── canary_script.js   # Synthetics monitoring script
-        └── report_generator.py # Daily report Lambda function
+        └── outputs.tf
 ```
 
 ## 🚀 Quick Start
