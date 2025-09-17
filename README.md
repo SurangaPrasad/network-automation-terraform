@@ -58,41 +58,59 @@ This infrastructure implements a three-tier architecture with the following comp
 ├── versions.tf                 # Provider version constraints
 ├── .gitignore                 # Git ignore patterns
 ├── README.md                  # This file
+├── ARCHITECTURE.md            # Detailed architecture documentation
 ├── environments/              # Environment-specific configurations
-│   ├── dev/
-│   │   └── terraform.tfvars   # Development environment variables
-│   └── prod/
-│       └── terraform.tfvars   # Production environment variables
+│   ├── dev.tfvars            # Development environment variables
+│   └── prod.tfvars           # Production environment variables
 └── modules/                   # Reusable Terraform modules
     ├── vpc/                   # VPC and networking components
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # VPC module documentation
     ├── security/              # Security groups and NACLs
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # Security module documentation
     ├── alb/                   # Application Load Balancer
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # ALB module documentation
     ├── ec2/                   # EC2 instances and Auto Scaling
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # EC2 module documentation
     ├── rds/                   # RDS database
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # RDS module documentation
     ├── route53/               # DNS management
     │   ├── main.tf
     │   ├── variables.tf
-    │   └── outputs.tf
+    │   ├── outputs.tf
+    │   └── README.md         # Route53 module documentation
     └── monitoring/            # CloudWatch monitoring
         ├── main.tf
         ├── variables.tf
-        └── outputs.tf
+        ├── outputs.tf
+        └── README.md         # Monitoring module documentation
 ```
+
+## 📖 Module Documentation
+
+Each module includes comprehensive documentation with usage examples, inputs, outputs, and best practices:
+
+- **[VPC Module](modules/vpc/README.md)** - Complete networking foundation with subnets, NAT gateways, and flow logs
+- **[Security Module](modules/security/README.md)** - Security groups with least-privilege access patterns
+- **[ALB Module](modules/alb/README.md)** - Application Load Balancer with SSL termination and WAF protection
+- **[EC2 Module](modules/ec2/README.md)** - Auto Scaling EC2 instances with CloudWatch monitoring
+- **[RDS Module](modules/rds/README.md)** - Highly available MySQL database with encryption and backups
+- **[Route53 Module](modules/route53/README.md)** - DNS management with health checks and query logging
+- **[Monitoring Module](modules/monitoring/README.md)** - Comprehensive monitoring with dashboards, alarms, and Synthetics
 
 ## 🚀 Quick Start
 
